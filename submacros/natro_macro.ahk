@@ -1,4 +1,4 @@
-﻿/*
+/*
 Natro Macro (https://github.com/NatroTeam/NatroMacro)
 Copyright © Natro Team (https://github.com/NatroTeam)
 
@@ -17212,6 +17212,7 @@ ShellRun(prms*)
 nm_claimHiveSlot(){
 	global KeyDelay, FwdKey, RightKey, LeftKey, BackKey, ZoomOut, HiveSlot, HiveConfirmed, SC_E, SC_Esc, SC_R, SC_Enter, bitmaps, ReconnectMessage
 	static LastNatroSoBroke := 1
+	HiveSlot := 1
 
 	GetBitmap() {
 		pBMScreen := Gdip_BitmapFromScreen(windowX+windowWidth//2-200 "|" windowY+offsetY "|400|125")
@@ -17355,6 +17356,7 @@ nm_claimHiveSlot(){
 		Send "{Text}/[" A_Hour ":" A_Min "] Natro so broke :weary:`n"
 		sleep 250
 	}
+	Send "/{Enter}" ; chat starts closed now for some reason
 	MouseMove windowX+350, windowY+offsetY+100
 
 	return 1
@@ -20997,6 +20999,7 @@ ba_harvestPlanter(planterNum){
 			KeyWait "F14", "T20 L"
 			nm_endWalk()
 			nm_loot(9, 5, "left")
+			nm_setStatus("Looted", planterName)
 		}
 		if ((ConvertFullBagHarvest = 1) && (BackpackPercent >= 95))
 		{
