@@ -22,6 +22,16 @@ The only official sources are:
 -->
 
 <!-- no official site warning -->
+
+I had alot of problems with the original natro, so imma try to say what i fixed here
+
+the dumb planter timer window looks 10x better now
+adding a planter makes it default to harvest at full
+fixed the vic bee detection
+
+
+All the stuff below is yip yap
+
 > [!CAUTION]
 > We do **not** have a website. The only official place to download Natro Macro is this repository and [discord.gg/natromacro][discord-link].
 
