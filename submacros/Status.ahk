@@ -1,4 +1,4 @@
-﻿/*
+/*
 Natro Macro (https://github.com/NatroTeam/NatroMacro)
 Copyright © Natro Team (https://github.com/NatroTeam)
 
@@ -672,7 +672,7 @@ nm_status(status)
 	if (discordCheck = 1)
 	{
 		; set colour based on state string
-		static colorIndex := 0, colors := [16711680, 16744192, 16776960, 65280, 255, 4915330, 9699539]
+		static colorIndex := 0, colors := [16711680, 15086080, 14435850, 13788170, 14435850, 15086080, 16711680]
 		if (WebhookEasterEgg = 1)
 			color := colors[colorIndex := Mod(colorIndex, 7) + 1]
 		else
@@ -693,7 +693,7 @@ nm_status(status)
 		content := ((criticalCheck = 1) && discordUID
 			&& (((CriticalErrorPingCheck = 1) && (state = "Error"))
 			|| ((DisconnectPingCheck = 1) && InStr(stateString, "Disconnected"))
-			|| ((GameFrozenPingCheck = 1) && (InStr(stateString, "Resetting: Character") && (Mod(SubStr(objective, InStr(objective, " ")+1), 10) = 5)))
+			;|| ((GameFrozenPingCheck = 1) && (InStr(stateString, "Resetting: Character") && (Mod(SubStr(objective, InStr(objective, " ")+1), 10) = 5)))
 			|| ((PhantomPingCheck = 1) && InStr(stateString, "Phantom"))
 			|| ((UnexpectedDeathPingCheck = 1) && (state = "You Died"))
 			|| ((EmergencyBalloonPingCheck = 1) && InStr(stateString, "No Balloon Convert"))
@@ -713,7 +713,7 @@ nm_status(status)
 			|| ((ViciousSSCheck = 1) && InStr(stateString, "Completed: Vicious Bee"))
 			|| ((DeathSSCheck = 1) && (state = "You Died"))
 			|| ((state = "Detected") && InStr(stateString, "Night"))
-			|| ((PlanterSSCheck = 1) && (((state = "Detected") || (state = "Screenshot") || (state = "Holding")) && InStr(stateString, "Planter")))
+			|| ((PlanterSSCheck = 1) && (((state = "Detected") || (state = "Screenshot") || (state == "Looted") || (state = "Holding")) && InStr(stateString, "Planter")))
 			|| ((HoneySSCheck = 1) && InStr(stateString, "Reporting: Daily Honey LB") && ((discordMode = 0) || (channel := (StrLen(ReportChannelID) < 17) ? MainChannelID : ReportChannelID)))
 			|| ((ssDebugging = 1) && ((state = "Placing") || (state = "Collecting") || (state = "Failed") || InStr(stateString, "Next Quest Step")))
 			|| ((state = "Gathering") && !InStr(objective, "Ended") && (HoneyUpdateSSCheck) && (pBM := CreateHoneyBitmap(1, 0)))
@@ -1296,8 +1296,11 @@ nm_command(command)
 			{
 				vars["PlanterMode"] := IniRead("settings\nm_config.ini", "Planters", "PlanterMode")
 				n := params[3]
-				if (vars["PlanterName" n] && (vars["PlanterName" n] != "None") && (vars["MPlanterHold" n] = 1) && (vars["PlanterMode"] = 1))
+				if (vars["PlanterName" n] && (vars["PlanterName" n] != "None") && (vars["PlanterMode"] = 1))
 				{
+					if (vars["MPlanterHold" n] = 0) {
+						UpdateInt("MPlanterHold" n, 1, "Planters")
+					}
 					UpdateInt("MPlanterSmoking" n, 1, "Planters")
 					discord.SendEmbed("Set held planter in Slot " n " to smoking!", 5066239, , , , id)
 				}
