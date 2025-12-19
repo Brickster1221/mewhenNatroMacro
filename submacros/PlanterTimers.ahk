@@ -91,9 +91,12 @@ TimersGui.Add("picture", "x216 y35 h40 w40 vvplantername3 +BackgroundTrans")
 TimersGui.Add("picture", "x34 y16 h18 w18 vvplanternectar1 +BackgroundTrans")
 TimersGui.Add("picture", "x120 y16 h18 w18 vvplanternectar2 +BackgroundTrans")
 TimersGui.Add("picture", "x206 y16 h18 w18 vvplanternectar3 +BackgroundTrans")
+TimersGui.Add("picture", "x2 y16 h18 w18 vglitterpic1 +BackgroundTrans Hidden", "nm_image_assets\ptimers\glitter.png")
+TimersGui.Add("picture", "x88 y16 h18 w18 vglitterpic2 +BackgroundTrans Hidden", "nm_image_assets\ptimers\glitter.png")
+TimersGui.Add("picture", "x174 y16 h18 w18 vglitterpic3 +BackgroundTrans Hidden", "nm_image_assets\ptimers\glitter.png")
 TimersGui.Add("text", "x2 y2 w82 vp1timer +center +BackgroundTrans", "h m s")
-TimersGui.Add("text", "x88 y2 w82 vp2timer +center +BackgroundTrans", "h m s")
-TimersGui.Add("text", "x174 y2 w82 vp3timer +center +BackgroundTrans", "h m s")
+TimersGui.Add("text", "xp+86 y2 w82 vp2timer +center +BackgroundTrans", "h m s")
+TimersGui.Add("text", "xp+86 y2 w82 vp3timer +center +BackgroundTrans", "h m s")
 ;TimersGui.Add("text", "x258 y4 w66 +center +BackgroundTrans", "Next King")
 ;TimersGui.Add("text", "x258 y40 w66 +center +BackgroundTrans", "Next Bear")
 ;TimersGui.Add("text", "x258 y76 w66 +center +BackgroundTrans", "Next Wolf")
@@ -124,12 +127,21 @@ TimersGui.Add("Button", "xp+86 y76 wp h15 vReady3", "Ready").OnEvent("Click", ba
 TimersGui.Add("Button", "x43 y76 wp h15 vClear1", "Add").OnEvent("Click", ba_setPlanterData)
 TimersGui.Add("Button", "xp+86 y76 wp h15 vClear2", "Add").OnEvent("Click", ba_setPlanterData)
 TimersGui.Add("Button", "xp+86 y76 wp h15 vClear3", "Add").OnEvent("Click", ba_setPlanterData)
-TimersGui.Add("Button", "x1 y92 wp h15 vSubHour1", "-1HR").OnEvent("Click", ba_setPlanterTimer)
-TimersGui.Add("Button", "xp+86 y92 wp h15 vSubHour2", "-1HR").OnEvent("Click", ba_setPlanterTimer)
-TimersGui.Add("Button", "xp+86 y92 wp h15 vSubHour3", "-1HR").OnEvent("Click", ba_setPlanterTimer)
-TimersGui.Add("Button", "x43 y92 wp h15 vAddHour1", "+1HR").OnEvent("Click", ba_setPlanterTimer)
-TimersGui.Add("Button", "xp+86 y92 wp h15 vAddHour2", "+1HR").OnEvent("Click", ba_setPlanterTimer)
-TimersGui.Add("Button", "xp+86 y92 wp h15 vAddHour3", "+1HR").OnEvent("Click", ba_setPlanterTimer)
+TimersGui.Add("Button", "x65 y92 w20 h15 vSubHour1", "-").OnEvent("Click", ba_setPlanterTimer)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vSubHour2", "-").OnEvent("Click", ba_setPlanterTimer)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vSubHour3", "-").OnEvent("Click", ba_setPlanterTimer)
+TimersGui.Add("Button", "x43 y92 wp h15 vAddHour1", "+").OnEvent("Click", ba_setPlanterTimer)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vAddHour2", "+").OnEvent("Click", ba_setPlanterTimer)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vAddHour3", "+").OnEvent("Click", ba_setPlanterTimer)
+TimersGui.Add("Button", "x1 y92 w14 h15 vGlitter1", "G").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "xp+86 y92 w14 h15 vGlitter2", "G").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "xp+86 y92 w14 h15 vGlitter3", "G").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "x15 y92 wp h15 vHold1", "H").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vHold2", "H").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vHold3", "H").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "x29 y92 wp h15 vSmoking1", "S").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vSmoking2", "S").OnEvent("Click", ba_changeState)
+TimersGui.Add("Button", "xp+86 y92 wp h15 vSmoking3", "S").OnEvent("Click", ba_changeState)
 
 ;Blender
 ;TimersGui.Add("Button", "x1 y184 w42 h15 vBlenderReady1", "Ready").OnEvent("Click", ba_resetBlenderTimer)
@@ -219,6 +231,7 @@ Loop {
             {
                 TimersGui["vplanter" v i].Value := (Planter%v%%i% = "None") ? "" : "nm_image_assets\ptimers\" . ((v = "name") ? "planter" : v) . "s\" Planter%v%%i% ".png"
                 LastPlanter%v%%i% := Planter%v%%i%
+                TimersGui["glitterpic" i].Visible := (1 < IniRead("settings/nm_config.ini", "Planters", "PlanterGlitter" i))
             }
         }
 
@@ -365,6 +378,24 @@ ba_setPlanterData(GuiCtrl, *){
         UpdateInt("MPlanterHold" i, 0)
         UpdateInt("PlanterHarvestNow" i, 0)
         UpdateInt("MPlanterSmoking" i, 0)
+    }
+}
+ba_changeState(GuiCtrl, *) {
+    global PlanterName1, PlanterName2, PlanterName3
+    i := SubStr(GuiCtrl.Name, -1), c:= SubStr(GuiCtrl.Name, 1,1)
+    PlanterName%i% := IniRead("settings\nm_config.ini", "Planters", "PlanterName" i)
+    if (PlanterName%i% != "None") {
+        if (c = "G") {
+            UpdateInt("PlanterGlitter" i, nowUnix())
+            TimersGui["glitterpic" i].Visible := (1 < IniRead("settings/nm_config.ini", "Planters", "PlanterGlitter" i))
+        } else if (c = "H") {
+            UpdateInt("PlanterHarvestTime" i, nowUnix()-1)
+            UpdateInt("MPlanterHold" i, !IniRead("settings/nm_config.ini", "Planters", "MPlanterHold" i))
+        } else {
+            UpdateInt("PlanterHarvestTime" i, nowUnix()-1)
+            UpdateInt("MPlanterHold" i, 1)
+            UpdateInt("MPlanterSmoking" i, !IniRead("settings/nm_config.ini", "Planters", "MPlanterSmoking" i))
+        }
     }
 }
 ba_addPlanterData(PlanterIndex){
