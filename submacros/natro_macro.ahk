@@ -10407,6 +10407,33 @@ nm_Reset(checkAll:=1, wait:=2000, convert:=1, force:=0){
 			Gdip_DisposeImage(pBMScreen)
 			sendinput "{" RotRight " 4}" ((A_Index = 2) ? ("{" ((hivedown := !hivedown) ? RotDown : RotUp) "}") : "")
 		}
+		if (!HiveConfirmed) && (nm_imgSearch("hvresetfailed1.png", 50)[1]=0){
+			;MsgBox "you are THERE"
+			;go to slot 1
+			Sleep 500
+			GetRobloxClientPos(hwnd)
+			MouseMove windowX+350, windowY+offsetY+100
+			send "{" ZoomOut " 8}"
+
+			movement :=
+			(
+			'Send "{' RightKey ' down}"
+			Walk(4)
+			Send "{' FwdKey ' down}"
+			Walk(20)
+			Send "{' RightKey ' up}{' FwdKey ' up}"'
+			)
+			nm_createWalk(movement)
+			KeyWait "F14", "D T5 L"
+			KeyWait "F14", "T20 L"
+			nm_endWalk()
+			movement := nm_Walk(9.2, LeftKey)
+			nm_createWalk(movement)
+			KeyWait "F14", "D T5 L"
+			KeyWait "F14", "T20 L"
+			nm_endWalk()
+			HiveConfirmed := 1
+		}
 	}
 	;convert
 	(convert=1) && nm_convert()
@@ -15464,7 +15491,8 @@ nm_GoGather(){
 			if (eligible.Has(1) || eligible.Has(2) || eligible.Has(3)) {
 
 				; find next eligible field and slot
-				if 		((eligible.Has(1)) && (((LastPlanterGatherSlot=1) && (!eligible.Has(2)) && (!eligible.Has(3))) || ((LastPlanterGatherSlot=2) && (!eligible.Has(3))) || (LastPlanterGatherSlot=3)))
+				; gotta make it harvest pop first fr
+				if 		((eligible.Has(1))) ; && (((LastPlanterGatherSlot=1) && (!eligible.Has(2)) && (!eligible.Has(3))) || ((LastPlanterGatherSlot=2) && (!eligible.Has(3))) || (LastPlanterGatherSlot=3)))
 						{
 						LastPlanterGatherSlot:= 1
 						field := PlanterField1
@@ -21648,6 +21676,7 @@ mp_HarvestPlanter(PlanterIndex) {
 				Sleep 1000
 				nm_Move(1500*round(18/MoveSpeedNum, 2), BackKey, RightKey)
 				nm_loot(9, 5, "left")
+				nm_setStatus("Looted", MPlanterName)
 			}
 		if ((MConvertFullBagHarvest = 1) && (BackpackPercent >= 95))
 		{
