@@ -231,18 +231,20 @@ Loop {
             {
                 TimersGui["vplanter" v i].Value := (Planter%v%%i% = "None") ? "" : "nm_image_assets\ptimers\" . ((v = "name") ? "planter" : v) . "s\" Planter%v%%i% ".png"
                 LastPlanter%v%%i% := Planter%v%%i%
-                TimersGui["glitterpic" i].Visible := (1 < IniRead("settings/nm_config.ini", "Planters", "PlanterGlitter" i))
             }
         }
 
         if (TimersGui["Clear" i].Text != (text := ((PlanterName%i% = "None") ? "Add" : "Clear")))
             TimersGui["Clear" i].Text := text
+        TimersGui["glitterpic" i].Visible := (1 < IniRead("settings/nm_config.ini", "Planters", "PlanterGlitter" i))
 
         MPlanterHold%i% := IniRead("settings/nm_config.ini", "Planters", "MPlanterHold" i)
         MPlanterSmoking%i% := IniRead("settings/nm_config.ini", "Planters", "MPlanterSmoking" i)
         PlanterMode := IniRead("settings/nm_config.ini", "Planters", "PlanterMode")
+        ;PlanterHarvestNow%i% := IniRead("settings/nm_config.ini", "Planters", "PlanterHarvestNow" i)
 
-        TimersGui["p" i "timer"].Text := DurationFromSeconds(p%i%timer := PlanterHarvestTime%i% - nowUnix(), (p%i%timer > 360000) ? "'No Planter'" : (p%i%timer > 0) ? (((p%i%timer >= 3600) ? "h'h' m" : "") . ((p%i%timer >= 60) ? "m'm' s" : "") . "s's'") : ((MPlanterSmoking%i%) && (PlanterMode = 1)) ? "'Smoking'" : ((MPlanterHold%i%) && (PlanterMode = 1)) ? "'Holding'" : "'Ready'")
+        TimersGui["p" i "timer"].Text := (IniRead("settings/nm_config.ini", "Planters", "PlanterHarvestNow" i) = 1) ? "Harvest" : DurationFromSeconds(p%i%timer := PlanterHarvestTime%i% - nowUnix(), (p%i%timer > 360000) ? "'No Planter'" : (p%i%timer > 0) ? (((p%i%timer >= 3600) ? "h'h' m" : "") . ((p%i%timer >= 60) ? "m'm' s" : "") . "s's'") : ((MPlanterSmoking%i%) && (PlanterMode = 1)) ? "'Smoking'" : ((MPlanterHold%i%) && (PlanterMode = 1)) ? "'Holding'" : "'Ready'")
+        TimersGui["Ready" i].Text := (PlanterHarvestTime%i% <= nowUnix()) ? "Claim" : "Ready"
     }
     Loop 3 {
         i := A_Index
@@ -346,6 +348,9 @@ ba_resetPlanterTimer(GuiCtrl, *){
     global PlanterName1, PlanterName2, PlanterName3, PlanterHarvestTime1, PlanterHarvestTime2, PlanterHarvestTime3
     i := SubStr(GuiCtrl.Name, -1)
 	PlanterName%i% := IniRead("settings\nm_config.ini", "Planters", "PlanterName" i)
+    if (PlanterHarvestTime%i% <= nowUnix()) {
+        UpdateInt("PlanterHarvestNow" i, !IniRead("settings\nm_config.ini", "Planters", "PlanterHarvestNow" i))
+    }
 	if (PlanterName%i% != "None") {
 		UpdateInt("PlanterHarvestTime" i, nowUnix()-1)
 	}
